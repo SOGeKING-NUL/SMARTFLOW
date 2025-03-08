@@ -48,3 +48,4 @@ ckpt/*
 
 #pytest cache
 .cache/
+.env
