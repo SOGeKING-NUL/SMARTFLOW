@@ -1,0 +1,9 @@
+# config.yaml
+traffic_signal:
+  min_green_time: 15
+  max_red_time: 120
+  yellow_duration: 5
+  reward_weights:
+    waiting_time: -0.1
+    throughput: 2
+    emergency_penalty: -100
