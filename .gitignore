@@ -1,0 +1,50 @@
+node_modules
+backend/yolov8x.pt 
+backend/yolov8l.pt 
+backend/data/test3.mp4" 
+
+# Python bytecode
+*.pyc
+
+# Weight files
+# bin/
+
+# Sample image data
+sample_img/*.jpg
+!sample_img/sample_*.jpg
+sample_img/out/*
+
+# Annotated test results
+results/
+
+# Intermediate training data
+pyGame_simultions/darkflow/backup/
+tfnet/yolo/parse-history.txt
+tfnet/yolo/*.parsed
+*.txt
+!requirements*.txt
+*.pb
+/profile
+/test.py
+
+# Built cython files
+pyGame_simultions/darkflow/cython_utils/*.pyd
+pyGame_simultions/darkflow/cython_utils/*.c
+
+#egg-info
+darkflow.egg-info/
+
+#Other build stuff
+build/
+
+#TensorBoard logs
+summary/
+
+#Built graphs
+built_graph/
+
+#Training checkpoints
+ckpt/*
+
+#pytest cache
+.cache/
