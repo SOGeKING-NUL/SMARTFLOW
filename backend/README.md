@@ -148,12 +148,63 @@ python -m rl.evaluate --model results/dqn_v1.zip --seeds 42 7 123
 * Against **max-pressure** the gap is small (5.14 vs 5.28 s wait). On a *single
   isolated* intersection a well-tuned heuristic is already near-optimal, so this
   is expected — the RL agent matches it and additionally achieves the best
-  throughput and speed. The case where learning is expected to pull clearly
-  ahead is **coordinated multi-intersection** control (see Limitations).
+  throughput and speed. Coordinated **multi-intersection** control is where
+  learning has the most room to help; that experiment is reported below.
 * The agent is genuinely state-responsive, not a constant policy: over 300
   decisions it switched phase 140 times and served the more-congested direction
   63% of the time (it trades switching cost against queue rather than acting
   myopically).
+
+---
+
+## Scaling up: multi-intersection coordination (2×2 grid)
+
+To test whether learning helps when signals must *coordinate*, the controller is
+extended to a **2×2 grid of four signalized intersections** (`netgenerate`,
+~2,500 vehicles/hour of randomized fringe-to-fringe demand). This is **multi-agent
+RL**: sumo-rl's PettingZoo `parallel_env` exposes one agent per intersection, and
+a **single shared policy is trained with parameter-sharing PPO** (Stable-Baselines3
++ SuperSuit) — the four agents are vectorised so every environment step yields
+four transitions. One policy controls all intersections.
+
+<p align="center">
+  <img src="results/grid_demo.gif" alt="Trained shared policy controlling the 2x2 grid" width="100%">
+  <br><em>The trained shared policy controlling all four intersections of the 2×2 grid.</em>
+</p>
+
+**Table 2.** Network-wide performance over 3 seeds (2×2 grid, 1-hour demand).
+
+| Controller          | Avg wait (s) ↓ | Avg time-loss (s) ↓ | Avg queue (veh) ↓ | Mean speed (m/s) ↑ | Throughput (veh) ↑ |
+|---------------------|---------------:|--------------------:|------------------:|-------------------:|-------------------:|
+| Fixed-time          |          20.42 |               38.21 |             16.02 |               6.78 |             2505.3 |
+| **Actuated (SUMO)** |       **9.94** |               26.35 |              7.71 |               8.05 |             2507.7 |
+| Max-pressure        |          11.14 |               27.43 |              7.66 |               7.98 |             2508.3 |
+| RL (PPO, shared)    |          11.08 |               26.78 |              7.65 |               8.05 |             2508.7 |
+
+![Grid: RL vs baselines](results/grid_comparison.png)
+
+**Honest reading.** The shared multi-agent policy **cuts network-wide waiting time
+~46 % versus fixed-time** (20.4 → 11.1 s) and is **on par with max-pressure**
+(11.08 vs 11.14 s). It does **not** beat SUMO's actuated controller (9.94 s),
+which is the strongest baseline here. In other words: learning is clearly worth it
+over a static plan, and competitive with strong adaptive heuristics, but it does
+not dominate them on this scenario.
+
+That is an honest and unsurprising result. Beating a well-tuned actuated
+controller is hard, and a small grid with *uniformly random* demand offers little
+coordination structure to exploit — there are no sustained directional platoons
+for the policy to synchronise into green waves. The setups where multi-agent RL is
+expected to pull ahead are **larger networks** and **demand with strong arterial
+flow**; both are natural next steps (see Limitations). The value demonstrated here
+is the **end-to-end multi-agent pipeline** (PettingZoo → parameter sharing → SB3)
+and a rigorous, like-for-like benchmark — not a claim of RL supremacy.
+
+```bash
+python -m rl.train_grid    --timesteps 200000               # parameter-sharing PPO (~45 min CPU)
+python -m rl.evaluate_grid --model results/grid_ppo_v1.zip --seeds 42 7 123
+python -m rl.record_grid   --model results/grid_ppo_v1.zip  # GIF above (opens sumo-gui)
+# instant fixed-time view, no Python:  sumo-gui -c rl/nets/grid/grid_demo.sumocfg
+```
 
 ---
 
@@ -297,16 +348,19 @@ backend/
 
 ## Limitations (honest)
 
-* **Single intersection.** This is one intersection with two phases. A
-  multi-intersection grid (sumo-rl's PettingZoo multi-agent API) is the natural
-  next step and where RL should clearly outpace per-junction heuristics.
-* **RL ≈ max-pressure here.** As noted, the learned policy's margin over
-  max-pressure is small on an isolated junction; the win over deployed-style
-  fixed-time/actuated control is the meaningful result.
+* **RL is competitive, not dominant, over strong heuristics.** On both the single
+  intersection and the 2×2 grid, the learned policy clearly beats fixed-time
+  (~46–55 %) and matches max-pressure, but does not beat SUMO's actuated
+  controller on the grid. Demonstrating clear RL dominance needs the conditions
+  it can exploit (below), not just more intersections.
+* **Coordination-favorable demand is the next step.** The grid uses *uniformly
+  random* demand, which lacks the sustained directional platoons where coordinated
+  green-waves pay off. A larger network (e.g. 4×4) and arterial-biased demand are
+  the setups where multi-agent RL is expected to pull ahead.
 * **Synthetic demand.** Traffic is randomized (`randomTrips`, seed 42), not from
   a real traffic dataset; absolute numbers are scenario-specific.
-* **CPU, modest budget.** 100k steps on CPU. More steps / hyperparameter search
-  / PPO comparison would likely improve the agent further.
+* **CPU, modest budget.** 100k steps (single) / 200k (grid) on CPU. More steps,
+  hyperparameter search, or a coordination-aware reward would likely help further.
 * **Tech stack.** SUMO 1.22 · sumo-rl 1.4.5 · Stable-Baselines3 2.6.0 ·
   Gymnasium 1.1.1 · PyTorch 2.5.1 (CPU) · FastAPI. Pinned in
   [`requirements.txt`](requirements.txt).

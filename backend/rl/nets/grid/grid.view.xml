@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- sumo-gui view settings for the 2x2 grid demo (4 intersections).
+     Framed on the grid centre (250,250) and zoomed to show all four junctions
+     and their queues at once. Loaded via the gui-settings-file option. -->
+<viewsettings>
+    <scheme name="real world"/>
+    <delay value="60"/>
+    <viewport zoom="160" x="250" y="250" angle="0"/>
+    <vehicles vehicleSize.exaggeration="2.0" vehicleSize.minSize="2.0"
+              vehicleName.show="false" showBlinker="true"/>
+    <junctions junctionName.show="false" drawLinkTLIndex.show="false"/>
+    <background showGrid="false"/>
+</viewsettings>

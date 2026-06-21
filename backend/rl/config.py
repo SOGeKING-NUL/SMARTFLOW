@@ -32,6 +32,13 @@ EMERGENCY_ROUTE_FILE = SCENARIOS_DIR / "emergency" / "emergency.rou.xml"
 DEMO_ROUTE_FILE = SCENARIOS_DIR / "demo" / "demo.rou.xml"
 DEMO_VIEW_FILE = SCENARIOS_DIR / "demo" / "demo.view.xml"
 
+# Multi-intersection (2x2 grid) scenario for multi-agent RL.
+GRID_DIR = NETS_DIR / "grid"
+GRID_NET_FILE = GRID_DIR / "grid.net.xml"                  # static-TL grid
+GRID_NET_ACTUATED_FILE = GRID_DIR / "grid_actuated.net.xml"  # actuated-TL grid
+GRID_ROUTE_FILE = GRID_DIR / "grid.rou.xml"
+GRID_VIEW_FILE = GRID_DIR / "grid.view.xml"                 # sumo-gui view settings
+
 for _d in (MODELS_DIR, LOG_DIR, PLOTS_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 
@@ -88,3 +95,24 @@ PPO_PARAMS = dict(
 )
 
 DEFAULT_TOTAL_TIMESTEPS = 100_000
+
+# Multi-agent (parameter-sharing PPO) hyperparameters for the grid. One shared
+# policy controls all intersections; the N agents are vectorised, so each
+# environment step yields N transitions.
+GRID_ENV_CONFIG = dict(
+    num_seconds=3600,
+    delta_time=5,
+    yellow_time=3,
+    min_green=10,
+    max_green=60,
+)
+GRID_PPO_PARAMS = dict(
+    learning_rate=3e-4,
+    n_steps=256,
+    batch_size=128,
+    gamma=0.95,
+    gae_lambda=0.95,
+    ent_coef=0.01,
+    policy_kwargs=dict(net_arch=[128, 128]),
+)
+GRID_DEFAULT_TIMESTEPS = 200_000

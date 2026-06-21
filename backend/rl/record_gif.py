@@ -59,7 +59,7 @@ def record(
         seed=config.SEED,
         route_file=route_file,
         num_seconds=(steps + warmup + 5) * config.ENV_CONFIG["delta_time"],
-        additional_sumo_cmd=f'--gui-settings-file "{view_file}"',
+        additional_sumo_cmd=f"--gui-settings-file {view_file}",
     )
     obs, _ = env.reset()
 

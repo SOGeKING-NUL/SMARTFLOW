@@ -4,7 +4,6 @@ import Reveal from "./Reveal";
 import BarChart from "./BarChart";
 import ComparisonTable from "./ComparisonTable";
 import LearningCurve from "./LearningCurve";
-import Reproducibility from "./Reproducibility";
 import DemoStrip from "./DemoStrip";
 import Citation from "./Citation";
 import { METRICS, RESULTS, improvement, EVAL_META } from "../data/results";
@@ -114,15 +113,10 @@ export default function Results() {
         <ComparisonTable />
       </Reveal>
 
-      {/* Learning curve + reproducibility */}
-      <div className="mt-12 grid items-start gap-8 lg:grid-cols-[1.6fr_1fr]">
-        <Reveal>
-          <LearningCurve />
-        </Reveal>
-        <Reveal>
-          <Reproducibility />
-        </Reveal>
-      </div>
+      {/* Learning curve */}
+      <Reveal className="mt-12">
+        <LearningCurve />
+      </Reveal>
 
       {/* Detection feed demo */}
       <DemoStrip />

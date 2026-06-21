@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Quick visual look at the 2x2 grid (SUMO's built-in fixed-time signals), no Python:
+       sumo-gui -c backend/rl/nets/grid/grid_demo.sumocfg
+     To see the TRAINED multi-agent policy driving all four signals, use:
+       python -m rl.record_grid --model results/grid_ppo_v1.zip -->
+<configuration>
+    <input>
+        <net-file value="grid.net.xml"/>
+        <route-files value="grid.rou.xml"/>
+        <gui-settings-file value="grid.view.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+    </time>
+    <processing>
+        <time-to-teleport value="-1"/>
+    </processing>
+    <report>
+        <no-step-log value="true"/>
+        <no-warnings value="true"/>
+    </report>
+</configuration>

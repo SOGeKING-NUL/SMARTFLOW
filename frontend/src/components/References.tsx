@@ -1,45 +1,5 @@
-import { useState } from "react";
-import { Copy, Check } from "lucide-react";
 import Reveal from "./Reveal";
-import { REFERENCES, BIBTEX } from "../data/content";
-
-function CiteBlock() {
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(BIBTEX);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* clipboard unavailable — the text is still selectable below */
-    }
-  };
-  return (
-    <div className="figure-frame mt-10 overflow-hidden">
-      <div className="flex items-center justify-between border-b border-rule px-5 py-3">
-        <span className="microlabel">Cite this project</span>
-        <button
-          type="button"
-          onClick={copy}
-          className="inline-flex items-center gap-1.5 rounded-sm border border-rule px-2.5 py-1 font-mono text-xs text-graphite transition-colors hover:border-ink hover:text-ink"
-        >
-          {copied ? (
-            <>
-              <Check className="h-3.5 w-3.5 text-go-deep" aria-hidden="true" /> Copied
-            </>
-          ) : (
-            <>
-              <Copy className="h-3.5 w-3.5" aria-hidden="true" /> Copy
-            </>
-          )}
-        </button>
-      </div>
-      <pre className="overflow-x-auto px-5 py-4 font-mono text-xs leading-relaxed text-graphite">
-        {BIBTEX}
-      </pre>
-    </div>
-  );
-}
+import { REFERENCES } from "../data/content";
 
 export default function References() {
   return (
@@ -94,8 +54,6 @@ export default function References() {
             </li>
           ))}
         </ol>
-
-        <CiteBlock />
       </Reveal>
     </section>
   );

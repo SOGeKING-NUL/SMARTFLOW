@@ -158,18 +158,24 @@ without retraining. The frontend runs with `cd frontend && bun install && bun ru
 
 ## 8. Limitations and scope
 
-- **Single intersection, two phases.** Results characterize one isolated junction;
-  the regime where learning is expected to clearly surpass per-junction heuristics
-  is *coordinated, multi-intersection* control (see Roadmap).
+- **Competitive, not dominant, over strong heuristics.** On the single
+  intersection *and* a 2×2 multi-agent grid (parameter-sharing PPO), the policy
+  clearly beats fixed-time (~46–55 %) and matches max-pressure, but does not beat
+  SUMO's actuated controller on the grid. Full grid study and analysis:
+  [`backend/README.md`](backend/README.md).
+- **Coordination-favorable demand is the next lever.** The grid uses uniformly
+  random demand, which lacks the sustained directional platoons where coordinated
+  green-waves would let learning pull ahead.
 - **Simulated demand.** Traffic is randomized via `randomTrips` rather than drawn
   from a measured dataset, so absolute figures are scenario-specific.
-- **Compute budget.** Training uses 100k steps on CPU; longer schedules,
-  hyperparameter search, or on-policy methods (e.g. PPO) may improve the agent.
+- **Compute budget.** 100k steps (single) / 200k (grid) on CPU; longer schedules,
+  hyperparameter search, or a coordination-aware reward may improve the agent.
 
 ## 9. Roadmap
 
-- **Multi-agent coordination** across a network of intersections (sumo-rl /
-  PettingZoo), where global delay reduction is the primary objective.
+- **Larger networks + arterial demand:** scale the multi-agent grid (e.g. 4×4)
+  with directional/platooned flow — the regime where coordinated RL is expected to
+  surpass actuated and max-pressure control.
 - **Perception-to-control bridge:** feed live camera-based lane counts (e.g.
   YOLO detection) into the RL state for on-street deployment.
 - **Edge deployment** of the trained policy onto IoT-class hardware.
