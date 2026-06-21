@@ -1,17 +1,21 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { RESULTS, seedStats, type MetricKey } from "../data/results";
+import { RESULTS, seedStats, type ControllerResult, type MetricKey } from "../data/results";
 
 interface Props {
   metric: MetricKey;
   unit: string;
   betterWhen: "lower" | "higher";
+  /** dataset to chart (defaults to the single-intersection results) */
+  data?: ControllerResult[];
+  /** show per-seed min–max whiskers (only the single intersection has seed data) */
+  errorBars?: boolean;
 }
 
 /** Horizontal bar chart of one metric across all controllers, RL highlighted,
- *  with per-seed min–max error bars where seed-level data was recorded. */
-export default function BarChart({ metric, unit, betterWhen }: Props) {
+ *  with optional per-seed min–max error bars where seed-level data exists. */
+export default function BarChart({ metric, unit, betterWhen, data = RESULTS, errorBars = true }: Props) {
   const reduce = useReducedMotion();
-  const values = RESULTS.map((r) => r[metric]);
+  const values = data.map((r) => r[metric]);
   const max = Math.max(...values);
 
   // For "throughput" the bars are near-identical; anchor the axis a little below
@@ -22,13 +26,13 @@ export default function BarChart({ metric, unit, betterWhen }: Props) {
   const range = max - axisMin || 1;
   const toPct = (v: number) => ((v - axisMin) / range) * 100;
 
-  const anyErrorBars = RESULTS.some((r) => seedStats(r.controller, metric));
+  const anyErrorBars = errorBars && data.some((r) => seedStats(r.controller, metric));
 
   return (
     <div role="img" aria-label={`${metric} by controller`} className="space-y-3">
-      {RESULTS.map((r, i) => {
+      {data.map((r, i) => {
         const pct = toPct(r[metric]);
-        const stats = seedStats(r.controller, metric);
+        const stats = errorBars ? seedStats(r.controller, metric) : null;
         return (
           <div key={r.controller} className="grid grid-cols-[7.5rem_1fr] items-center gap-3 sm:grid-cols-[9rem_1fr]">
             <div className="text-right">

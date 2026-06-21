@@ -3,20 +3,20 @@ import Reveal from "./Reveal";
 
 const LIMITATIONS = [
   {
-    title: "Single intersection, in simulation",
-    body: "Results are for one four-way intersection in SUMO over a one-hour demand profile — not a multi-intersection network or a field deployment.",
+    title: "Simulation, not the street",
+    body: "Both scenarios run in SUMO over a one-hour demand profile, with demand randomised via randomTrips rather than drawn from a measured dataset — so absolute figures are scenario-specific.",
   },
   {
-    title: "Throughput is saturated",
-    body: "Every controller clears ≈ 2,050 vehicles, so the improvement shows up in delay and queue length rather than throughput.",
+    title: "Competitive, not dominant",
+    body: "On the single intersection the policy beats all three baselines; on the 2×2 grid it matches max-pressure and beats fixed-time (~46%) but does not beat SUMO's actuated controller.",
+  },
+  {
+    title: "Demand isn't coordination-favorable",
+    body: "The grid uses uniformly random demand with no sustained directional platoons — the regime where coordinated green-waves would let a learned policy pull ahead of local heuristics.",
   },
   {
     title: "Preemption is a validated capability, not a headline number",
     body: "Emergency-vehicle preemption is implemented and validated in the digital twin; on the tested seed the emergency vehicle was already unobstructed, so no delay reduction is claimed.",
-  },
-  {
-    title: "Modest margin over max-pressure",
-    body: "The learned policy matches and slightly edges max-pressure; the large gains are versus fixed-time and actuated control, and the seed spread is small but non-zero.",
   },
 ];
 
@@ -27,7 +27,7 @@ export default function Limitations() {
       index="§4"
       label="Limitations"
       title="What these numbers do and don't claim."
-      intro="Stating the boundaries of the study plainly — the result is a fair, seeded benchmark on one intersection, not a deployment claim."
+      intro="Stating the boundaries of the study plainly — a fair, seeded benchmark on a single intersection and a 2×2 grid, not a deployment claim."
     >
       <div className="grid gap-5 md:grid-cols-2">
         {LIMITATIONS.map((l) => (

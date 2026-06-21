@@ -249,3 +249,74 @@ export const LEARNING_CURVE: LearningPoint[] = [
   { step: 97920, reward: -8.04, mean: -7.71 },
   { step: 99360, reward: -7.78, mean: -7.71 },
 ];
+
+// --------------------------------------------------------------------------- //
+// Multi-intersection: 2x2 grid (4 intersections), one shared-parameter PPO
+// policy. Source: backend/results/grid_comparison.csv (3-seed mean, 42/7/123).
+// No per-seed data was persisted for the grid, so its chart shows means only
+// (no error bars). On this scenario the policy matches max-pressure and roughly
+// halves waiting vs fixed-time, but does NOT beat SUMO's actuated controller.
+// --------------------------------------------------------------------------- //
+export const GRID_RESULTS: ControllerResult[] = [
+  {
+    controller: "Fixed-time",
+    isRL: false,
+    kind: "fixed",
+    avg_wait_s: 20.42,
+    avg_timeloss_s: 38.21,
+    avg_queue_veh: 16.02,
+    mean_speed_ms: 6.78,
+    throughput_veh: 2505.33,
+  },
+  {
+    controller: "Actuated",
+    isRL: false,
+    kind: "heuristic",
+    avg_wait_s: 9.94,
+    avg_timeloss_s: 26.35,
+    avg_queue_veh: 7.71,
+    mean_speed_ms: 8.05,
+    throughput_veh: 2507.67,
+  },
+  {
+    controller: "Max-pressure",
+    isRL: false,
+    kind: "heuristic",
+    avg_wait_s: 11.14,
+    avg_timeloss_s: 27.43,
+    avg_queue_veh: 7.66,
+    mean_speed_ms: 7.98,
+    throughput_veh: 2508.33,
+  },
+  {
+    controller: "RL (PPO, shared)",
+    isRL: true,
+    kind: "learned",
+    avg_wait_s: 11.08,
+    avg_timeloss_s: 26.78,
+    avg_queue_veh: 7.65,
+    mean_speed_ms: 8.05,
+    throughput_veh: 2508.67,
+  },
+];
+
+const gridFixed = GRID_RESULTS[0];
+const gridRl = GRID_RESULTS[GRID_RESULTS.length - 1];
+
+export const GRID_META = {
+  intersections: 4,
+  seeds: [42, 7, 123],
+  policy: "Shared-parameter PPO",
+  // (20.42 - 11.08) / 20.42
+  waitReductionVsFixed: Math.round(((gridFixed.avg_wait_s - gridRl.avg_wait_s) / gridFixed.avg_wait_s) * 100),
+  rlWait: gridRl.avg_wait_s,
+  fixedWait: gridFixed.avg_wait_s,
+  actuatedWait: GRID_RESULTS[1].avg_wait_s,
+  note: "One shared policy controls all four intersections. Demand is uniformly random, with no sustained directional platoons — the regime where coordinated green-waves would let learning pull ahead.",
+};
+
+/** Signed % improvement of value `b` over reference `a` for a metric. */
+export function relImprovement(a: number, b: number, betterWhen: "lower" | "higher"): number {
+  const raw = betterWhen === "lower" ? (a - b) / a : (b - a) / a;
+  return raw * 100;
+}

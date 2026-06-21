@@ -76,7 +76,7 @@ export default function Hero() {
         style={reduce ? undefined : { animationDelay: "0.12s" }}
       >
         <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <span className="microlabel">Fig. 0 — single intersection</span>
+          <span className="microlabel">Fig. 0 — 2×2 intersection grid</span>
           <span className="microlabel text-go-deep">agent-controlled</span>
         </div>
         <IntersectionAnimation />

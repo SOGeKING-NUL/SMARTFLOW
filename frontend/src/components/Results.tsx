@@ -4,6 +4,7 @@ import Reveal from "./Reveal";
 import BarChart from "./BarChart";
 import ComparisonTable from "./ComparisonTable";
 import LearningCurve from "./LearningCurve";
+import GridResults from "./GridResults";
 import DemoStrip from "./DemoStrip";
 import Citation from "./Citation";
 import { METRICS, RESULTS, improvement, EVAL_META } from "../data/results";
@@ -22,14 +23,25 @@ export default function Results() {
       id="results"
       index="§3"
       label="Results"
-      title="The learned policy beats every classical baseline on the same scenario."
+      title="Benchmarked against three baselines — on one intersection and a 2×2 grid."
       intro={
         <>
           {EVAL_META.note} The baselines are fixed-time, gap-based actuated, and
-          max-pressure<Citation n={6} /> control.
+          max-pressure<Citation n={6} /> control. On the single intersection the
+          learned policy beats all three; scaled to a four-intersection grid it
+          matches max-pressure and beats fixed-time, but not actuated.
         </>
       }
     >
+      <Reveal>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 pb-6">
+          <h3 className="font-display text-2xl font-semibold text-ink">
+            Single intersection — DQN
+          </h3>
+          <span className="microlabel">beats every baseline</span>
+        </div>
+      </Reveal>
+
       {/* Metric selector */}
       <Reveal>
         <div
@@ -117,6 +129,9 @@ export default function Results() {
       <Reveal className="mt-12">
         <LearningCurve />
       </Reveal>
+
+      {/* Scaling to a 2x2 grid */}
+      <GridResults />
 
       {/* Detection feed demo */}
       <DemoStrip />

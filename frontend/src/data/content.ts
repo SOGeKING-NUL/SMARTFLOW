@@ -21,13 +21,14 @@ export const HERO = {
 
 // Abstract — written in the voice of a short applied-research report.
 export const ABSTRACT =
-  "We frame isolated traffic-signal control as a Markov decision process and train a deep reinforcement-learning agent (DQN) in the SUMO microsimulator to select signal phases from live, lane-level demand. On a single four-way intersection under a one-hour demand profile, the learned policy lowers average vehicle waiting time by ~55% versus a fixed-time controller and ~25% versus an actuated controller, and matches the strongest classical heuristic (max-pressure) — evaluated over three random seeds on an identical scenario. We describe the formulation, a custom reward, the benchmark against three baselines, and the limitations of the study.";
+  "We frame traffic-signal control as a Markov decision process and train deep reinforcement-learning agents in the SUMO microsimulator to select signal phases from live, lane-level demand. On a single four-way intersection, a DQN policy lowers average vehicle waiting time by ~55% versus a fixed-time controller and ~25% versus an actuated controller, and matches the strongest classical heuristic (max-pressure). Scaling to a 2×2 grid of four intersections with a single shared-parameter PPO policy, the agent still roughly halves waiting versus fixed-time (~46%) and matches max-pressure, though on this uniformly-random-demand scenario it does not beat the actuated controller. All results are averaged over three random seeds on identical scenarios; we report the formulation, a custom reward, the baseline benchmark, and the limitations.";
 
 export const CONTRIBUTIONS = [
-  "Formulate isolated signal control as a 19-dimensional MDP — phase, min-green flag, and per-lane density and queue — with a discrete phase-selection action.",
+  "Formulate signal control as an MDP — phase, min-green flag, and per-lane density and queue — with a discrete phase-selection action.",
   "Design queue_wait, a dense, bounded reward that combines waiting-time improvement with a standing-queue penalty (Eq. 1).",
   "Train DQN and PPO agents with Stable-Baselines3 in the SUMO / sumo-rl environment.",
-  "Benchmark the learned policy against fixed-time, actuated, and max-pressure baselines over three seeds on an identical scenario.",
+  "Scale to a 2×2 multi-intersection grid with one shared-parameter PPO policy controlling all four signals.",
+  "Benchmark every controller against fixed-time, actuated, and max-pressure baselines over three seeds on identical scenarios.",
 ];
 
 // Verified references — each maps to a method, tool, or baseline actually used.
