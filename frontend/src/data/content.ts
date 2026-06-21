@@ -4,7 +4,7 @@
 // and describes the project, not individual contributions.
 
 export const LINKS = {
-  github: "https://github.com/Karush2807/SMARTFLOW", // TODO: confirm canonical repo URL
+  github: "https://github.com/Kcodess2807/SMARTFLOW",
 };
 
 export const META = {
